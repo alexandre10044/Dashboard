@@ -1,0 +1,44 @@
+services:
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+
+  server:
+    build:
+      context: server
+      dockerfile: Dockerfile
+    ports: 
+        - "8080:8080"
+    depends_on:
+        - db
+
+  weather:
+    build:
+      context: weather
+      dockerfile: Dockerfile
+    depends_on:
+        - db
+
+  money:
+    build:
+      context: money
+      dockerfile: Dockerfile
+    depends_on:
+        - db
+  
+version: '3.5'
+
+volumes:
+  my-db:
